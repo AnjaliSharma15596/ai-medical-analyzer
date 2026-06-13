@@ -10,7 +10,6 @@ st.set_page_config(
     layout="centered",
     initial_sidebar_state="collapsed"
 )
-
 st.markdown("""
 <style>
 /* Force dark background */
