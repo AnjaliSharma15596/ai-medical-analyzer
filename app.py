@@ -190,7 +190,7 @@ else:
             st.markdown(f'<div class="chat-ai">🤖 {chat["answer"]}</div>', unsafe_allow_html=True)
 
     st.markdown("### ❓ Ask a Question")
-    question = st.text_input("", placeholder="Example: What does my hemoglobin level mean? Is my sugar level normal?")
+    question = st.text_input("", placeholder="Example: What does my hemo globin level mean? Is my sugar level normal?")
 
     col1, col2 = st.columns(2)
     with col1:

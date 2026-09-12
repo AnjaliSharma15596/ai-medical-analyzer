@@ -88,6 +88,9 @@ def create_conversation_chain(vector_store):
     - Never diagnose — only explain what the report says
     - Be empathetic and calm in your responses
     - Structure your response clearly with headings
+    - ONLY use information present in the Context below. If the Context does not contain
+      information needed to answer the Question, clearly say "This information is not
+      present in the uploaded report" instead of guessing or using outside knowledge
 
     Context from medical report:
     {context}
