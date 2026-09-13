@@ -68,7 +68,9 @@ def create_conversation_chain(vector_store):
     llm = ChatGroq(
         groq_api_key=os.getenv("GROQ_API_KEY"),
         model_name="llama-3.1-8b-instant",
-        temperature=0.3
+        temperature=0.3,
+        timeout=30,       # give up waiting after 30 seconds instead of hanging forever
+        max_retries=2      # automatically retry up to 2 times on transient failures
     )
 
     memory = ConversationBufferMemory(
@@ -124,7 +126,20 @@ def analyze_report(chain, question):
         response = chain({"question": question})
         return response["answer"]
     except Exception as e:
-        return f"Error analyzing report: {str(e)}"
+        error_text = str(e).lower()
+
+        # Distinguish common failure types so the user gets a clear, honest message
+        if "timeout" in error_text or "timed out" in error_text:
+            return ("⚠️ The AI is taking too long to respond right now. "
+                    "This usually means the service is under heavy load. Please try again in a moment.")
+        elif "rate limit" in error_text or "429" in error_text:
+            return ("⚠️ Too many requests right now — please wait a few seconds and try again.")
+        elif "connection" in error_text or "network" in error_text:
+            return ("⚠️ Couldn't reach the AI service. Please check your connection and try again.")
+        else:
+            # Fallback for anything unexpected — still user-friendly, no raw stack trace shown
+            return ("⚠️ Something went wrong while analyzing your question. Please try again, "
+                    "or try re-uploading the report if the issue continues.")
 
 
 def get_initial_analysis(chain):
